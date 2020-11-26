@@ -1,29 +1,34 @@
 <?php 
+    require_once "./contrasenyas.php";
+   
     $usuaris=array(
-        "usuari1"=>"admin@educem.com;iloveu",
-        "usuari2"=>"donald@educem.com;m4k3Am3r1caGr3atAg41n!",
-        "usuari3"=>"gilete@educem.com;ErF4ryS1empr3",
-        "usuari4"=>"gon@educem.com;Fatality!",
+        "usuari1"=>"admin@educem.com",
+        "usuari2"=>"donald@educem.com",
+        "usuari3"=>"gilete@educem.com",
+        "usuari4"=>"gon@educem.com",
 
     );
-   // var_dump($usuaris);
-   
+    
+    $i=1;
     $trobat=0;
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $email= $_POST['email'];
-        $pass= $_POST['password'];
+        $email= base64_decode($_POST['email']) ;
+        $pass= base64_decode($_POST['password']);
         foreach ($usuaris as $usuari) {
         
-           $partes= explode(";",$usuari);
-           $hash=password_hash($partes[1], PASSWORD_DEFAULT);
+           //$partes= explode(";",$usuari);
+           //$hash=password_hash($password[1],PASSWORD_BCRYPT);
            
-           if ($email==$partes[0] &&  password_verify($pass, $hash )) {
+           if ($email==$usuari &&  password_verify($pass,  $password[$i])) {
                $trobat=1;
                header('Location: https://educem.com');
            }
+           $i++;
         }
         if ($trobat==0) {
-         echo"no l'has trobat";
+         //echo"no l'has trobat";
+         echo"<script> alert('wrong username');document.getElementById('email').value=''; document.getElementById('password').value=''; </script>";
+         //Malerta();
         }
     }
 ?>
@@ -37,18 +42,17 @@
 <body>
     <h1>formulari</h1>
 
-<form class="form-group" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
+<form class="form-group" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST" onsubmit=" return validarForm()">
   <div class="form-group">
     <label>
-      <input id="fname" type="text" name="email" value=" ">
+      <input id="email" type="text" name="email"  value=" ">
       <span>email</span>
     </label>
-    
-    
+     
   </div>
   <div class="form-group">
     <label>
-      <input type="password" name="password" value="">
+      <input id="password" type="text" name="password" value=" ">
       <span>password</span>
     </label>
    
@@ -57,6 +61,7 @@
   <input type="submit" value="Send">
 </form>
 <a href="">vols recuperar la contrasenya?</a>
+<p id="prova">aaa</p>
 </body>
 </html>
 <style>
@@ -68,15 +73,29 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-}
+  }
 
 
 
-h1 {
-  margin: 0 auto 40px;
-  color: #fff;
-  font: 20px Helvetica;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-}
+  h1 {
+    margin: 0 auto 40px;
+    color: #fff;
+    font: 20px Helvetica;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
 </style>
+<script>
+ function  validarForm(){
+   var email= document.getElementById("email").value;
+   var password= document.getElementById("password").value;
+
+   var codEmail = window.btoa(email);
+   var codPassword = window.btoa(password);
+   document.getElementById("email").value=codEmail;
+   document.getElementById("password").value=codPassword;
+  // console.log(codEmail);
+  // console.log(codPassword);
+ } 
+ 
+</script>
